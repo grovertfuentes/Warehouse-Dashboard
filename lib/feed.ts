@@ -5,7 +5,7 @@ export async function readFeed(url: string) {
   if (!validFeedUrl(url)) throw new Error('Use the Secret address in iCal format for Contract Signed - GSPro.');
   let response: Response;
   // Workers supports manual/follow only. Reject redirects via response.ok below.
-  try { response = await fetch(url, {redirect:'manual',signal:AbortSignal.timeout(60000),headers:{Accept:'text/calendar'}}); }
+  try { response = await fetch(url, {cache:'no-store',redirect:'manual',signal:AbortSignal.timeout(60000),headers:{Accept:'text/calendar'}}); }
   catch { throw new Error('Google Calendar could not be reached. Please try again.'); }
   if (!response.ok) throw new Error('Google could not provide this calendar. Check that the private feed link is current.');
   if (!response.body) throw new Error('Google returned an empty response.');

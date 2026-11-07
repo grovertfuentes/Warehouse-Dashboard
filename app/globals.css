@@ -61,3 +61,4 @@ h1{font-size:clamp(23px,1.7vw,31px);letter-spacing:-1px}.clock{color:#25252c}.sc
 @media(max-width:1150px){.week-panel .ahead-heading{min-width:780px}.week-stats{gap:14px}}
 @media(max-width:550px){.week-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.week-stats>div{grid-template-columns:32px 1fr}.week-stats>div>span:last-child{grid-column:2}}
 @media(min-width:1151px){.dashboard{min-height:900px}.dashboard:has(.demo-notice){min-height:940px}}
+.access-notice{max-width:650px;margin:15vh auto;padding:32px;background:white;border:1px solid #dadae6;border-top:4px solid var(--brand);border-radius:10px}.access-notice h1{font-size:28px}.access-notice p{line-height:1.7;color:var(--muted)}
