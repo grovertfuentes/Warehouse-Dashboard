@@ -13,7 +13,9 @@ export async function readCalendarState():Promise<StoredCalendar> {
     try{return {state:JSON.parse(await readFile('.warehouse-local/calendar-state.json','utf8'))};}
     catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT')return {state:null};throw error;}
   }
-  const blob=await get(storagePath,{access:'private',useCache:false});
+  // Compression changes the response ETag to W/"...", which Blob rejects for
+  // conditional writes. Read the original representation so ifMatch stays valid.
+  const blob=await get(storagePath,{access:'private',useCache:false,headers:{'Accept-Encoding':'identity'}});
   if(!blob)return {state:null};
   if(blob.statusCode!==200)throw new Error('Calendar storage could not be read.');
   const state=await new Response(blob.stream).json() as CalendarState;
