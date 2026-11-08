@@ -1,7 +1,9 @@
 import { hasWarehouseAccess } from '../lib/warehouse-access';
 import Dashboard from './dashboard';
+import {redirect} from 'next/navigation';
+import {SessionKeepAlive} from './session-controls';
 export const dynamic = 'force-dynamic';
 export default async function Home() {
-  if(!await hasWarehouseAccess())return <main className="access-notice"><h1>Open your protected dashboard</h1><p>Use the warehouse dashboard’s Vercel address and sign in with your authorized Vercel account.</p></main>;
-  return <Dashboard />;
+  if(!await hasWarehouseAccess())redirect('/login');
+  return <><SessionKeepAlive/><Dashboard /></>;
 }

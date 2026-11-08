@@ -19,7 +19,13 @@ The Vercel project is `warehouse-dashboard` in the `dance-floors-guys` team.
 
 ### Access
 
-Keep **Vercel Authentication enabled** for every `.vercel.app` deployment. The application uses that platform access boundary rather than trusting browser-supplied identity headers. Set `WAREHOUSE_VERCEL_AUTH=enabled` only on the protected Vercel project. The application refuses production requests outside Vercel and on custom domains; add verified application authentication before enabling a custom domain or disabling Vercel protection.
+The production dashboard uses a shared warehouse password and encrypted, HttpOnly, Secure cookies. Set `WAREHOUSE_PASSWORD_HASH` (salt:scrypt hash) and a random `WAREHOUSE_SESSION_SECRET` in Vercel environment variables. Never put the password or either value in GitHub. Missing configuration denies access.
+
+“Remember this warehouse TV” keeps a device signed in for 30 days since its latest renewal, including across restarts. The open dashboard renews every 15 minutes, on returning to the page, and on calendar refresh. The password is never stored in the browser. Signing out clears this browser’s cookie. Changing the password hash or session secret invalidates existing sessions after deployment.
+
+Login attempts are limited using conditional writes to private Blob storage: five per client per 15 minutes and 20 total per hour, including successful sign-ins. Already signed-in devices continue refreshing during a login cooldown. IP addresses are keyed with HMAC and are not stored directly. Cross-origin login, logout, and renewal requests are rejected.
+
+Use **Standard Protection** (`prod_deployment_urls_and_all_previews`) for Vercel Authentication. Production domains show the application password screen; preview and deployment-specific URLs retain Vercel protection. Keep this protection on older deployments that predate application authentication. Never roll production back to an older, account-auth-only build without restoring Vercel Authentication for all domains first.
 
 ### Private calendar storage
 
@@ -38,7 +44,7 @@ npm ci
 npm run dev
 ```
 
-Open the local address printed by Next.js. Local development is restricted to localhost and stores any development calendar connection in ignored `.warehouse-local/` files. Use **Preview layout** to inspect sample jobs without connecting a calendar. Never commit local connection files or secrets.
+Open the local address printed by Next.js. Configure a separate test password hash and session secret in ignored `.env.local`. Local development stores any development calendar connection in ignored `.warehouse-local/` files. Use **Preview layout** to inspect sample jobs without connecting a calendar. Never commit local connection files or secrets.
 
 ## Validation
 

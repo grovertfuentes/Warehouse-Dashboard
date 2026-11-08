@@ -62,3 +62,18 @@ h1{font-size:clamp(23px,1.7vw,31px);letter-spacing:-1px}.clock{color:#25252c}.sc
 @media(max-width:550px){.week-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.week-stats>div{grid-template-columns:32px 1fr}.week-stats>div>span:last-child{grid-column:2}}
 @media(min-width:1151px){.dashboard{min-height:900px}.dashboard:has(.demo-notice){min-height:940px}}
 .access-notice{max-width:650px;margin:15vh auto;padding:32px;background:white;border:1px solid #dadae6;border-top:4px solid var(--brand);border-radius:10px}.access-notice h1{font-size:28px}.access-notice p{line-height:1.7;color:var(--muted)}
+.login-screen{min-height:100dvh;display:grid;place-items:center;padding:40px 20px;background:radial-gradient(ellipse at 50% 0%,#e6e2f7 0,transparent 65%),#f5f5f8;border-top:5px solid #56518d}
+.login-card{width:100%;max-width:460px;padding:38px;background:#fff;border:1px solid #e1dfea;border-radius:20px;box-shadow:0 18px 65px #29234412}
+.login-logo{display:block;width:205px;height:auto;margin:0 auto 32px}
+.login-icon{width:48px;height:48px;display:grid;place-items:center;background:#f0edf9;color:#56518d;border-radius:14px;margin-bottom:22px}
+.login-card h1{font-size:29px;letter-spacing:-1px;line-height:1.15;margin:10px 0 12px;color:#24242b}
+.login-intro{font-size:14px;line-height:1.6;color:#68736f;margin-bottom:26px}
+.login-label{display:block;font-weight:700;font-size:13px;margin-bottom:9px}
+.login-card input[type=password]{width:100%;font:inherit;font-size:20px;letter-spacing:3px;padding:13px 14px;border:1px solid #c9c6d6;border-radius:9px;background:#fff;color:#24242b}
+.login-card input:focus-visible,.login-card button:focus-visible{outline:3px solid #b2a8e6;outline-offset:3px}
+.remember-tv{display:flex;gap:11px;align-items:center;padding:19px 0 22px;color:#56518d;cursor:pointer}
+.remember-tv input{width:18px;height:18px;accent-color:#56518d;flex:none}
+.remember-tv span{flex:1}.remember-tv strong{font-size:13px;display:block;color:#303039}.remember-tv small{font-size:11px;display:block;color:#748079;margin-top:5px;line-height:1.5}
+.login-submit{display:flex;justify-content:center;align-items:center;gap:12px;width:100%;padding:15px;background:#56518d;color:#fff;font:inherit;font-weight:700;font-size:14px;border:0;border-radius:9px;cursor:pointer}
+.login-submit:disabled{opacity:.55;cursor:default}.login-footnote{text-align:center;color:#7d817f;font-size:11px;line-height:1.7;margin:22px 0 0}
+@media(max-width:480px){.login-screen{padding:22px 14px}.login-card{padding:27px 24px}.login-card h1{font-size:25px}}

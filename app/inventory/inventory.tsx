@@ -2,6 +2,7 @@
 import {useCallback,useEffect,useMemo,useRef,useState} from 'react';
 import {ArrowLeft,Box,PackageOpen,RefreshCw,Search,AlertTriangle} from 'lucide-react';
 import Brand from '../brand';
+import {SignOutButton} from '../session-controls';
 import {dayKey,shiftDay,TIME_ZONE,REFRESH_INTERVAL_MS} from '../../lib/calendar.mjs';
 import {inventoryForWeek} from '../../lib/inventory.mjs';
 
@@ -18,6 +19,7 @@ export default function Inventory(){
     if(busy.current)return;busy.current=true;setLoading(true);
     try{
       const response=await fetch(`/api/calendar${force?'?refresh=1':''}`,{cache:'no-store'});
+      if(response.status===401){window.location.replace('/login?next='+encodeURIComponent(window.location.pathname));return;}
       const data=await response.json() as Feed;
       if(!response.ok&&!data.connected)throw new Error(data.error||'Unable to load inventory.');
       setFeed(data);setError(data.error||'');
@@ -34,7 +36,7 @@ export default function Inventory(){
   const rows=(inventory.rows as ItemRow[]).filter(row=>row.name.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()));
   const known=!!feed?.fetchedAt;
   return <main className="inventory-screen">
-    <header className="topbar"><Brand title="Inventory needed"/><a href="/" className="back-calendar"><ArrowLeft size={17}/>Back to calendar</a></header>
+    <header className="topbar"><Brand title="Inventory needed"/><div className="header-actions"><SignOutButton/><a href="/" className="back-calendar"><ArrowLeft size={17}/>Back to calendar</a></div></header>
     <section className="inventory-overview">
       <div><div className="eyebrow">PREP AHEAD · NEXT 7 DAYS</div><h2>{today?`${dateLabel(today)} — ${dateLabel(shiftDay(today,6))}`:'Loading dates…'}</h2><p>Equipment for scheduled deliveries and customer carry-outs.</p></div>
       <div className="inventory-summary"><div><strong>{known?inventory.rows.length:'—'}</strong><span>different items</span></div><div><strong>{known?inventory.projectCount:'—'}</strong><span>outgoing projects</span></div></div>

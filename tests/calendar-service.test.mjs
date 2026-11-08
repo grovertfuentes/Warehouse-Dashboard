@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createCalendarService,CalendarConnectionError} from '../lib/calendar-service.mjs';
-import {warehouseAccessAllowed,warehouseOriginAllowed} from '../lib/warehouse-access.mjs';
+import {warehouseOriginAllowed} from '../lib/warehouse-access.mjs';
 const event={id:'job',description:'Loading entrance B',inventoryAvailable:true};
 const old={feedUrl:'private-test-feed',events:[event],fetchedAt:1000,updatedAt:1000};
 function fixture(initial=old){
@@ -26,13 +26,6 @@ test('Failed refresh retains the last good calendar and hides private upstream e
   assert.equal(result.stale,true);assert.equal(result.events[0].id,'job');assert.equal(f.state,old);
   assert.ok(!result.error.includes('Private source unavailable'));
   await assert.rejects(f.service.connect('replacement'));assert.equal(f.state,old);
-});
-test('Deployment access fails closed outside explicitly protected Vercel hosts',()=>{
-  const config={vercel:'1',nodeEnv:'production',protectionEnabled:'enabled',host:'warehouse-dashboard-dance-floors-guys.vercel.app'};
-  assert.equal(warehouseAccessAllowed(config),true);
-  for(const change of [{protectionEnabled:undefined},{vercel:undefined},{host:'public.example.com'},{host:'warehouse.vercel.app.evil.example'},{host:''}])assert.equal(warehouseAccessAllowed({...config,...change}),false);
-  assert.equal(warehouseAccessAllowed({nodeEnv:'development',host:'localhost:3000'}),true);
-  assert.equal(warehouseAccessAllowed({nodeEnv:'production',host:'localhost:3000'}),false);
 });
 test('Connection origin matches the browser-facing host behind a proxy',()=>{
   const config={origin:'https://warehouse.vercel.app',host:'warehouse.vercel.app',nodeEnv:'production'};

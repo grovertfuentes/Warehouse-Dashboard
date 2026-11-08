@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowDownLeft, ArrowUpRight, Box, CalendarDays, Check, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Clock3, Expand, PackageOpen, RefreshCw, Settings2, X, AlertTriangle, Link2, Pause, Play } from 'lucide-react';
 import Brand from './brand';
+import {SignOutButton} from './session-controls';
 import JobDetails, { type Job } from './job-details';
 import { dayKey, shiftDay, weekStart, eventsOnDay, totals, jobNames, serviceLabel, deliveryWindowEnd, packByHeight, isPriorityJob, TIME_ZONE, REFRESH_INTERVAL_MS, STALE_AFTER_MS } from '../lib/calendar.mjs';
 
@@ -73,7 +74,8 @@ export default function Dashboard(){
   const dialogRef=useRef<HTMLDialogElement>(null),jobRef=useRef<HTMLDialogElement>(null),busyRef=useRef(false);
   const refresh=useCallback(async(force=false)=>{
     if(busyRef.current)return;busyRef.current=true;setLoading(true);
-    try{const response=await fetch(`/api/calendar${force?'?refresh=1':''}`,{cache:'no-store'});const data=await response.json() as Feed;
+    try{const response=await fetch(`/api/calendar${force?'?refresh=1':''}`,{cache:'no-store'});if(response.status===401){window.location.replace('/login?next='+encodeURIComponent(window.location.pathname));return;}
+      const data=await response.json() as Feed;
       if(!response.ok&&!data.connected)throw new Error(data.error||'Unable to refresh the calendar.');
       setFeed(data);setError(data.error||'');setTick(0);
     }catch(e){setError(e instanceof Error?e.message:'Unable to refresh the calendar.');}
@@ -107,7 +109,7 @@ export default function Dashboard(){
     <header className="topbar">
       <Brand title="Warehouse calendar"/>
       <div className="clock-block"><div className="clock">{now?new Intl.DateTimeFormat('en-US',{hour:'numeric',minute:'2-digit',timeZone:TIME_ZONE}).format(now):'—'}</div><div>{dateFmt(today,{weekday:'long',month:'long',day:'numeric'})} · Eastern</div></div>
-      <div className="header-actions"><button className="refresh-button" aria-label="Refresh calendar now" onClick={()=>void refresh(true)} disabled={loading||demo}><RefreshCw size={16} className={loading?'spinning':''}/><span>{loading?'Refreshing…':'Refresh now'}</span></button><a className="inventory-cta" href="/inventory"><Box size={17}/><span>Inventory needed</span><ArrowUpRight size={16}/></a><button className="icon-button" title="Calendar settings" aria-label="Calendar settings" onClick={()=>setSettings(true)}><Settings2 size={20}/></button><button className="screen-button" aria-label={full?"Exit full screen":"Full screen"} onClick={fullscreen}><Expand size={17}/><span>{full?'Exit full screen':'Full screen'}</span></button></div>
+      <div className="header-actions"><SignOutButton/><button className="refresh-button" aria-label="Refresh calendar now" onClick={()=>void refresh(true)} disabled={loading||demo}><RefreshCw size={16} className={loading?'spinning':''}/><span>{loading?'Refreshing…':'Refresh now'}</span></button><a className="inventory-cta" href="/inventory"><Box size={17}/><span>Inventory needed</span><ArrowUpRight size={16}/></a><button className="icon-button" title="Calendar settings" aria-label="Calendar settings" onClick={()=>setSettings(true)}><Settings2 size={20}/></button><button className="screen-button" aria-label={full?"Exit full screen":"Full screen"} onClick={fullscreen}><Expand size={17}/><span>{full?'Exit full screen':'Full screen'}</span></button></div>
     </header>
     <section className="weekbar">
       <div className="week-heading"><div className="eyebrow">{weekLabels[expandedWeek??0]} · MON–SUN</div><div className="date-navigation"><h2>{dateFmt(viewStart,{month:'long',day:'numeric'})}<span>—</span>{dateFmt(days[6],{month:days[6].slice(0,7)!==viewStart.slice(0,7)?'long':undefined,day:'numeric'})}<small>{viewStart.slice(0,4)}</small></h2><div className="nav-buttons"><button aria-label="Previous week" disabled={offset+(expandedWeek??0)*7<=-28} onClick={()=>changeWeek(-7)}><ChevronLeft size={19}/></button><button onClick={()=>{setOffset(0);setExpandedWeek(0);setTick(0);}}>This week</button><button aria-label="Next week" disabled={offset+(expandedWeek??0)*7>=70} onClick={()=>changeWeek(7)}><ChevronRight size={19}/></button></div></div></div>

@@ -7,7 +7,7 @@ export const runtime='nodejs';
 export const maxDuration=120;
 const send=(data:unknown,status=200)=>Response.json(data,{status,headers:{'Cache-Control':'private, no-store'}});
 export async function POST(request:Request) {
-  if(!await hasWarehouseAccess())return send({error:'Open the protected Vercel dashboard before connecting the calendar.'},403);
+  if(!await hasWarehouseAccess())return send({error:'Please sign in before connecting the calendar.'},401);
   if(!warehouseOriginAllowed({origin:request.headers.get('origin'),host:request.headers.get('host'),nodeEnv:process.env.NODE_ENV}))return send({error:'Please connect from this dashboard.'},403);
   if(!request.headers.get('content-type')?.includes('application/json'))return send({error:'Invalid request.'},415);
   try {
